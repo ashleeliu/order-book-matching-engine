@@ -1,4 +1,4 @@
-# Limit-Order-Book-Matching-Engine
+# Limit Order Book Matching Engine
 
 I built a limit order book matching engine that replicates the core mechanics of how exchanges match buy and sell orders. The engine implements price-time priority matching and supports both limit and market orders. I simulated thousands of randomly generated orders arriving via a Poisson process to study how bid-ask spread and trade volume behave under continuous order flow.
 
