@@ -1,60 +1,32 @@
-# Limit Order Book Matching Engine
+#Limit-Order-Book-Matching-Engine
 
-A Python implementation of a limit order book with price-time priority matching,
-plus a simulation framework to analyze market behavior under random order flow.
+I built a limit order book matching engine that replicates the core mechanics of how exchanges match buy and sell orders. The engine implements price-time priority matching and supports both limit and market orders. I simulated thousands of randomly generated orders arriving via a Poisson process to study how bid-ask spread and trade volume behave under continuous order flow.
 
-## Features
+##What It Does
 
-- **Price-time priority matching**: orders are matched by best price first, then
-  earliest timestamp (standard exchange matching logic)
-- **Limit and market orders**: market orders execute immediately against the best
-  available price(s); unfilled remainders of limit orders rest on the book
-- **Order cancellation**: lazy deletion for O(log n) amortized cancel
-- **Heap-based book**: bids/asks stored as heaps (`heapq`) for O(log n) insertion
-  and best-price lookup, rather than re-sorting a list on every order
-- **Order flow simulation**: generates random buy/sell limit and market orders and
-  analyzes resulting spread behavior, trade volume, and price path
+Matches incoming buy and sell orders against the book using price-time priority Supports limit orders (rest on the book if unfilled) and market orders (execute immediately or cancel). Handles order cancellation and partial fills as orders are matched. Uses heap-based priority queues so best-price lookups and order insertion run in O(log n). Simulates random order flow and analyzes resulting spread and volume behavior
 
-## Files
+##Modeling Approach
 
-- `order_book.py` — core `OrderBook` class and matching engine
-- `simulate.py` — runs a 10,000-order random simulation and prints summary stats
-- `plot_results.py` — plots mid-price path and bid-ask spread over the simulation
+The book is maintained as two heaps — a max-heap of bids and a min-heap of asks — ordered by price first and timestamp second, so the best-priced, earliest order is always matched first. An incoming order is matched against the opposite side of the book while its price crosses the best available price; any unfilled limit quantity rests on the book, while unfilled market order quantity is dropped (immediate-or-cancel), mirroring how market orders behave on real exchanges. Order flow in the simulation is generated as a Poisson arrival process, with each order randomly assigned a side, order type, and price offset from the current mid-price.
 
-## Usage
+##Results
 
-```bash
-python order_book.py      # smoke test / example usage
-python simulate.py        # run simulation, print stats, save simulation_output.json
-python plot_results.py    # generate simulation_results.png from saved output
-```
+10,000-order simulation:
+• 10,000 orders processed (limit and market, roughly 70/30 split)
+• 8,683 trades executed
+• 316,590+ total shares traded
+• Mean bid-ask spread: $0.09 (median $0.07, stdev $0.07)
+• Spread range: $0.01 – $0.43
 
-## Example output
+Smoke test (4 resting orders + 1 crossing order):
 
-```
-Total orders processed: 10000
-Total trades executed:  8683
+• Best bid/ask correctly identified before the crossing order arrives
+• Crossing buy order correctly matched against both resting asks in price priority, generating 2 trades
+• Remaining book depth accurately reflects unfilled quantity after matching
 
-Spread statistics:
-  mean:   0.0881
-  median: 0.0700
-  stdev:  0.0699
-  min:    0.0100
-  max:    0.4300
+##Tools
 
-Trade size statistics:
-  mean quantity: 36.5
-  total volume:  316590
-```
-
-## Design notes
-
-- Trade price is set by the **resting** order's price (the order already on the
-  book), which is standard behavior — the incoming order "takes" liquidity at the
-  price the resting order was willing to trade at.
-- Market orders are treated as IOC (immediate-or-cancel): any unfilled quantity
-  is dropped rather than resting on the book, matching typical market order
-  semantics on real exchanges.
-- Cancellations are lazy: a cancelled order is marked in a set and skipped over
-  when encountered at the top of a heap, avoiding an O(n) heap rebuild on every
-  cancel.
+• Python
+• heapq (priority queue implementation)
+• Matplotlib
