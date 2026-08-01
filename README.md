@@ -13,20 +13,19 @@ The book is maintained as two heaps — a max-heap of bids and a min-heap of ask
 ## Results
 
 10,000-order simulation:
-• 10,000 orders processed (limit and market, roughly 70/30 split)
-• 8,683 trades executed
-• 316,590+ total shares traded
-• Mean bid-ask spread: $0.09 (median $0.07, stdev $0.07)
-• Spread range: $0.01 – $0.43
+- 10,000 orders processed (limit and market, roughly 70/30 split)
+- 8,683 trades executed
+- 316,590+ total shares traded
+- Mean bid-ask spread: $0.09 (median $0.07, stdev $0.07)
+- Spread range: $0.01 – $0.43
 
 Smoke test (4 resting orders + 1 crossing order):
-
-• Best bid/ask correctly identified before the crossing order arrives
-• Crossing buy order correctly matched against both resting asks in price priority, generating 2 trades
-• Remaining book depth accurately reflects unfilled quantity after matching
+- Best bid/ask correctly identified before the crossing order arrives
+- Crossing buy order correctly matched against both resting asks in price priority, generating 2 trades
+- Remaining book depth accurately reflects unfilled quantity after matching
 
 ## Tools
 
-• Python
-• heapq (priority queue implementation)
-• Matplotlib
+- Python
+- heapq (priority queue implementation)
+- Matplotlib
